@@ -6,11 +6,7 @@
 package br.senac.tads.dsw.exemplosspringjpa.repository;
 
 import br.senac.tads.dsw.exemplosspringjpa.entidade.Categoria;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,35 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author fernando.tsuda
  */
 @Repository
-public class CategoriaRepository {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-    
-    public List<Categoria> findAll() {
-        Query jpqlQuery = 
-                entityManager.createQuery("SELECT c FROM Categoria c");
-        return jpqlQuery.getResultList();
-    }
-    
-    public Categoria findById(Integer id) {
-        Query jpqlQuery = 
-                entityManager.createQuery(
-                        "SELECT c FROM Categoria c WHERE c.id = :idCat")
-                .setParameter("idCat", id);
-        Categoria c = (Categoria) jpqlQuery.getSingleResult();
-        return c;
-    }
-
-    @Transactional
-    public void save(Categoria c) {
-        if (c.getId() == null) {
-            // Criando uma categoria nova
-            entityManager.persist(c);
-        } else {
-            // Atualiza uma categoria já existente
-            entityManager.merge(c);
-        }
-    }
+public interface CategoriaRepository 
+        extends JpaRepository<Categoria, Integer>{
     
 }

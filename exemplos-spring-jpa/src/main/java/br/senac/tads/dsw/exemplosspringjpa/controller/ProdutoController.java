@@ -9,10 +9,12 @@ import br.senac.tads.dsw.exemplosspringjpa.entidade.Categoria;
 import br.senac.tads.dsw.exemplosspringjpa.entidade.Produto;
 import br.senac.tads.dsw.exemplosspringjpa.repository.CategoriaRepository;
 import br.senac.tads.dsw.exemplosspringjpa.repository.ProdutoRepository;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,10 +50,10 @@ public class ProdutoController {
         List<Produto> produtos;
         if (idsCat != null && !idsCat.isEmpty()) {
             // Busca filtrando pelos IDs das categorias informados
-            produtos = produtoRepository.findByCategoria(idsCat);
+            produtos = produtoRepository.findDistinctByCategorias_IdIn(idsCat);
         } else {
             // Busca normal
-            produtos = produtoRepository.findAll(offset, qtd);
+            produtos = produtoRepository.findAll();
         }
         return new ModelAndView("produto/lista").addObject("produtos", produtos);
     }
@@ -64,7 +66,8 @@ public class ProdutoController {
     @GetMapping("/{id}/editar")
     public ModelAndView editar(
             @PathVariable(name = "id") Long id) {
-        Produto p = produtoRepository.findById(id);
+        Optional<Produto> optProduto = produtoRepository.findById(id);
+        Produto p = optProduto.get();
 
         // Mapeando os IDs das categorias para gerar o formulário com as opções marcadas
         Set<Integer> idsCategorias = new HashSet<>();
@@ -84,7 +87,8 @@ public class ProdutoController {
         if (produto.getIdsCategorias() != null && !produto.getIdsCategorias().isEmpty()) {
             Set<Categoria> categoriasSelecionadas = new HashSet<>();
             for (Integer idCat : produto.getIdsCategorias()) {
-                Categoria cat  = categoriaRepository.findById(idCat);
+                Optional<Categoria> optCat  = categoriaRepository.findById(idCat);
+                Categoria cat = optCat.get();
                 // Criar a relacao bidirecional entre os objetos produto e categoria.
                 cat.setProdutos(new HashSet<>(Arrays.asList(produto)));
                 categoriasSelecionadas.add(cat);
@@ -100,7 +104,8 @@ public class ProdutoController {
     @PostMapping("/{id}/remover")
     public ModelAndView remover(
             @PathVariable(name = "id") Long id, RedirectAttributes redirectAttributes) {
-        produtoRepository.delete(id);
+        Optional<Produto> optProduto = produtoRepository.findById(id);
+        produtoRepository.delete(optProduto.get());
         redirectAttributes.addFlashAttribute("mensagemSucesso",
                 "Produto ID " + id + " removido com sucesso");
         return new ModelAndView("redirect:/produto");
@@ -109,6 +114,21 @@ public class ProdutoController {
     @ModelAttribute("categorias")
     public List<Categoria> getCategorias() {
         return categoriaRepository.findAll();
+    }
+    
+    @GetMapping("/nome/{nome}")
+    public ModelAndView editar2(
+            @PathVariable(name = "nome") String nome) {
+        Optional<Produto> optProduto = produtoRepository.findByNome(nome);
+        Produto p = optProduto.get();
+
+        // Mapeando os IDs das categorias para gerar o formulário com as opções marcadas
+        Set<Integer> idsCategorias = new HashSet<>();
+        for (Categoria cat : p.getCategorias()) {
+            idsCategorias.add(cat.getId());
+        }
+        p.setIdsCategorias(idsCategorias);
+        return new ModelAndView("produto/formulario").addObject("produto", p);
     }
 
 }
