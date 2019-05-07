@@ -55,29 +55,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**").authenticated()
                 .and()
                     .formLogin()
+                        .loginPage("/login") // DEFINE A TELA DE LOGIN DO SISTEMA E NAO DO SPRING
+                        .usernameParameter("username")
+                        .passwordParameter("senha")
+                        .defaultSuccessUrl("/home").permitAll()
+                .and()
+                    .logout()
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                 .and()
                     .exceptionHandling().accessDeniedPage("/erro/403");
 
-        /*
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/css/**", "/img/**", "/js/**", "/font/**").permitAll()
-                .antMatchers("/protegido/peao").hasRole("PEAO")
-                .antMatchers("/protegido/fodon").hasRole("FODON")
-                .antMatchers("/protegido/god").hasRole("GOD")
-                .antMatchers("/**").authenticated()
-            .and()
-                .formLogin()
-                    .loginPage("/login") // DEFINE A TELA DE LOGIN DO SISTEMA E NAO DO SPRING
-                    .usernameParameter("username")
-                    .passwordParameter("senha")
-                    .defaultSuccessUrl("/home").permitAll()
-            .and()
-                .logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login?logout")
-                    .invalidateHttpSession(true).deleteCookies("JSESSIONID");
-         */
     }
 
 }
