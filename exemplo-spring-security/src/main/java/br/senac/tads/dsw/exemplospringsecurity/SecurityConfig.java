@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
     }
-    
+
     public static PasswordEncoder bcryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -46,6 +46,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
+                    .antMatchers("/css/**", "/img/**", "/js/**", "/font/**").permitAll()
+                    .antMatchers("/protegido/peao").hasRole("PEAO")
+                    .antMatchers("/protegido/fodon").hasRole("FODON")
+                    .antMatchers("/protegido/god").hasRole("GOD")
+                    .antMatchers("/**").authenticated()
+                .and()
+                    .formLogin()
+                .and()
+                    .exceptionHandling().accessDeniedPage("/erro/403");
+
         /*
         http.csrf().disable()
                 .authorizeRequests()
@@ -65,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/login?logout")
                     .invalidateHttpSession(true).deleteCookies("JSESSIONID");
-        */
+         */
     }
 
 }

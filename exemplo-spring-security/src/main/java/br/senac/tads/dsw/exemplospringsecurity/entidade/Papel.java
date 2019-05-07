@@ -30,6 +30,9 @@ public class Papel implements GrantedAuthority {
         this.nome = nome;
     }
 
+    /*
+     * Fornece o nome do papel que será validado pelo Spring Security
+     */
     @Override
     public String getAuthority() {
         return getNome();
