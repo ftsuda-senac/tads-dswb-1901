@@ -8,5 +8,6 @@
     <body>
         <h1 th:text="${titulo}"></h1>
         <h2 th:text="${msg}"></h2>
+        <div>Usuário logado: <span sec:authentication="principal.nomeCompleto"></span></div>
     </body>
 </html>
