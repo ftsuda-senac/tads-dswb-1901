@@ -55,6 +55,18 @@ public class ProdutoController {
         }
         return new ModelAndView("produto/lista").addObject("produtos", produtos);
     }
+    
+    @GetMapping("/lista2")
+    public ModelAndView listar2(
+            @RequestParam(name = "page", defaultValue = "1") int pagina) {
+        List<Produto> produtos;
+        int qtd = 2;
+        int indice = pagina - 1;
+        int offset = indice * qtd;
+        
+        produtos = produtoRepository.findAll(offset, qtd);
+        return new ModelAndView("produto/lista").addObject("produtos", produtos);
+    }
 
     @GetMapping("/novo")
     public ModelAndView adicionarNovo() {
