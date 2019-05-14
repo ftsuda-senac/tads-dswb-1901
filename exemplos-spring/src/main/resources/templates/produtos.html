@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Produtos</h1>
+    
+            <ul th:each="idSel : ${idsSelecionados}">
+                <li th:text="${idSel}"></li>
+            </ul>
+        
+        
+        <ul th:each="prod : ${produtos}">
+            <h2 th:text="${prod.nome}"></h2>
+            <form th:action="@{/exemplo-sessao3/adicionar}" method="post">
+                <input type="hidden" name="id" th:value="${prod.id}" />
+                <button type="submit">Enviar</button>
+            </form>
+        </ul>
+    </body>
+</html>
