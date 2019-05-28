@@ -9,13 +9,44 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script>
+            function enviarDados(ev) {
+                ev.preventDefault();
+                var produto = {
+                    id : $("#itemId").val(),
+                    nome : $("#txtNome").val(),
+                    descricao : $("#txtDescricao").val(),
+                    precoCompra : $("#txtPrecoCompra").val(),
+                    precoVenda : $("#txtPrecoVenda").val(),
+                    quantidade : $("#txtQuantidade").val()
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: 'api/produto',
+                    data: JSON.stringify(produto),
+                    success: function(data) { alert('data: ' + data); },
+                    contentType: "application/json",
+                    dataType: 'json'
+                });
+            }
+            
             $(function() {
                 /* https://stackoverflow.com/a/901144 */
                 var urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get("id") !== null) {
-                    
+                    $.getJSON("api/produto/" + urlParams.get("id"),
+                        function(dataJSON) {
+                            $("#titulo").text("Alteração de produto");
+                            $("#itemId").val(dataJSON.id);
+                            $("#txtNome").val(dataJSON.nome);
+                            $("#txtDescricao").val(dataJSON.descricao);
+                            $("#txtPrecoCompra").val(dataJSON.precoCompra);
+                            $("#txtPrecoVenda").val(dataJSON.precoVenda);
+                            $("#txtQuantidade").val(dataJSON.quantidade);
+                    });
                 }
+                $("#prodForm").submit(enviarDados);
             });
+
         </script>
     </head>
     <body>
@@ -23,7 +54,7 @@
             <div class="row">
                 <section class="col-md-12">
                     <h1 id="titulo">Inclusão de produto</h1>
-                    <form novalidate>
+                    <form novalidate id="prodForm">
                         <input type="hidden" id="itemId" />
 
                         <div class="form-group row">
@@ -84,7 +115,7 @@
 
                         <div class="row">
                             <div class="col-md-3 offset-md-3">
-                                <a th:href="@{/produto}" role="button" class="btn btn-block btn-outline-dark">Cancelar</a>
+                                <a role="button" class="btn btn-block btn-outline-dark">Cancelar</a>
                             </div>
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-block btn-success">Enviar</button>
