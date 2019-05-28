@@ -17,7 +17,7 @@
                     descricao : $("#txtDescricao").val(),
                     precoCompra : $("#txtPrecoCompra").val(),
                     precoVenda : $("#txtPrecoVenda").val(),
-                    quantidade : $("#txtQuantidade").val()
+                    quantidade : $("#txtQuantidade").val(),
                 };
                 $.ajax({
                     type: 'POST',
@@ -28,7 +28,6 @@
                     dataType: 'json'
                 });
             }
-            
             $(function() {
                 /* https://stackoverflow.com/a/901144 */
                 var urlParams = new URLSearchParams(window.location.search);
